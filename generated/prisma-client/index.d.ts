@@ -356,6 +356,19 @@ export interface Prisma {
   deleteStudent: (where: StudentWhereUniqueInput) => StudentPromise;
   deleteManyStudents: (where?: StudentWhereInput) => BatchPayloadPromise;
   createTest: (data: TestCreateInput) => TestPromise;
+  updateTest: (args: {
+    data: TestUpdateInput;
+    where: TestWhereUniqueInput;
+  }) => TestPromise;
+  updateManyTests: (args: {
+    data: TestUpdateManyMutationInput;
+    where?: TestWhereInput;
+  }) => BatchPayloadPromise;
+  upsertTest: (args: {
+    where: TestWhereUniqueInput;
+    create: TestCreateInput;
+    update: TestUpdateInput;
+  }) => TestPromise;
   deleteTest: (where: TestWhereUniqueInput) => TestPromise;
   deleteManyTests: (where?: TestWhereInput) => BatchPayloadPromise;
   createTutor: (data: TutorCreateInput) => TutorPromise;
@@ -460,8 +473,10 @@ export type InvoiceOrderByInput =
   | "idinvoice_DESC"
   | "date_ASC"
   | "date_DESC"
-  | "paid_ASC"
-  | "paid_DESC";
+  | "tutorpaid_ASC"
+  | "tutorpaid_DESC"
+  | "studentpaid_ASC"
+  | "studentpaid_DESC";
 
 export type NoteOrderByInput =
   | "idnote_ASC"
@@ -505,7 +520,11 @@ export type StudentOrderByInput =
   | "phone_ASC"
   | "phone_DESC";
 
-export type TestOrderByInput = "idtest_ASC" | "idtest_DESC";
+export type TestOrderByInput =
+  | "idtest_ASC"
+  | "idtest_DESC"
+  | "str_ASC"
+  | "str_DESC";
 
 export type TutorOrderByInput =
   | "idtutor_ASC"
@@ -683,8 +702,10 @@ export interface InvoiceWhereInput {
   date_lte?: Maybe<DateTimeInput>;
   date_gt?: Maybe<DateTimeInput>;
   date_gte?: Maybe<DateTimeInput>;
-  paid?: Maybe<Boolean>;
-  paid_not?: Maybe<Boolean>;
+  tutorpaid?: Maybe<Boolean>;
+  tutorpaid_not?: Maybe<Boolean>;
+  studentpaid?: Maybe<Boolean>;
+  studentpaid_not?: Maybe<Boolean>;
   note?: Maybe<NoteWhereInput>;
   AND?: Maybe<InvoiceWhereInput[] | InvoiceWhereInput>;
   OR?: Maybe<InvoiceWhereInput[] | InvoiceWhereInput>;
@@ -938,6 +959,21 @@ export interface TestWhereInput {
   idtest_lte?: Maybe<Int>;
   idtest_gt?: Maybe<Int>;
   idtest_gte?: Maybe<Int>;
+  student?: Maybe<StudentWhereInput>;
+  str?: Maybe<String>;
+  str_not?: Maybe<String>;
+  str_in?: Maybe<String[] | String>;
+  str_not_in?: Maybe<String[] | String>;
+  str_lt?: Maybe<String>;
+  str_lte?: Maybe<String>;
+  str_gt?: Maybe<String>;
+  str_gte?: Maybe<String>;
+  str_contains?: Maybe<String>;
+  str_not_contains?: Maybe<String>;
+  str_starts_with?: Maybe<String>;
+  str_not_starts_with?: Maybe<String>;
+  str_ends_with?: Maybe<String>;
+  str_not_ends_with?: Maybe<String>;
   AND?: Maybe<TestWhereInput[] | TestWhereInput>;
   OR?: Maybe<TestWhereInput[] | TestWhereInput>;
   NOT?: Maybe<TestWhereInput[] | TestWhereInput>;
@@ -1041,7 +1077,8 @@ export interface CompanyUpdateManyMutationInput {
 export interface InvoiceCreateInput {
   idinvoice?: Maybe<Int>;
   session: SessionCreateOneInput;
-  paid?: Maybe<Boolean>;
+  tutorpaid?: Maybe<Boolean>;
+  studentpaid?: Maybe<Boolean>;
   note?: Maybe<NoteCreateOneInput>;
 }
 
@@ -1117,7 +1154,8 @@ export interface NoteCreateInput {
 
 export interface InvoiceUpdateInput {
   session?: Maybe<SessionUpdateOneRequiredInput>;
-  paid?: Maybe<Boolean>;
+  tutorpaid?: Maybe<Boolean>;
+  studentpaid?: Maybe<Boolean>;
   note?: Maybe<NoteUpdateOneInput>;
 }
 
@@ -1224,7 +1262,8 @@ export interface SessionUpsertNestedInput {
 }
 
 export interface InvoiceUpdateManyMutationInput {
-  paid?: Maybe<Boolean>;
+  tutorpaid?: Maybe<Boolean>;
+  studentpaid?: Maybe<Boolean>;
 }
 
 export interface NoteUpdateInput {
@@ -1288,6 +1327,17 @@ export interface StudentUpdateManyMutationInput {
 
 export interface TestCreateInput {
   idtest?: Maybe<Int>;
+  student: StudentCreateOneInput;
+  str?: Maybe<String>;
+}
+
+export interface TestUpdateInput {
+  student?: Maybe<StudentUpdateOneRequiredInput>;
+  str?: Maybe<String>;
+}
+
+export interface TestUpdateManyMutationInput {
+  str?: Maybe<String>;
 }
 
 export interface TutorUpdateInput {
@@ -1650,14 +1700,16 @@ export interface AggregateCompanySubscription
 export interface Invoice {
   idinvoice: Int;
   date: DateTimeOutput;
-  paid: Boolean;
+  tutorpaid: Boolean;
+  studentpaid: Boolean;
 }
 
 export interface InvoicePromise extends Promise<Invoice>, Fragmentable {
   idinvoice: () => Promise<Int>;
   session: <T = SessionPromise>() => T;
   date: () => Promise<DateTimeOutput>;
-  paid: () => Promise<Boolean>;
+  tutorpaid: () => Promise<Boolean>;
+  studentpaid: () => Promise<Boolean>;
   note: <T = NotePromise>() => T;
 }
 
@@ -1667,7 +1719,8 @@ export interface InvoiceSubscription
   idinvoice: () => Promise<AsyncIterator<Int>>;
   session: <T = SessionSubscription>() => T;
   date: () => Promise<AsyncIterator<DateTimeOutput>>;
-  paid: () => Promise<AsyncIterator<Boolean>>;
+  tutorpaid: () => Promise<AsyncIterator<Boolean>>;
+  studentpaid: () => Promise<AsyncIterator<Boolean>>;
   note: <T = NoteSubscription>() => T;
 }
 
@@ -1677,7 +1730,8 @@ export interface InvoiceNullablePromise
   idinvoice: () => Promise<Int>;
   session: <T = SessionPromise>() => T;
   date: () => Promise<DateTimeOutput>;
-  paid: () => Promise<Boolean>;
+  tutorpaid: () => Promise<Boolean>;
+  studentpaid: () => Promise<Boolean>;
   note: <T = NotePromise>() => T;
 }
 
@@ -2143,22 +2197,29 @@ export interface AggregateStudentSubscription
 
 export interface Test {
   idtest: Int;
+  str?: String;
 }
 
 export interface TestPromise extends Promise<Test>, Fragmentable {
   idtest: () => Promise<Int>;
+  student: <T = StudentPromise>() => T;
+  str: () => Promise<String>;
 }
 
 export interface TestSubscription
   extends Promise<AsyncIterator<Test>>,
     Fragmentable {
   idtest: () => Promise<AsyncIterator<Int>>;
+  student: <T = StudentSubscription>() => T;
+  str: () => Promise<AsyncIterator<String>>;
 }
 
 export interface TestNullablePromise
   extends Promise<Test | null>,
     Fragmentable {
   idtest: () => Promise<Int>;
+  student: <T = StudentPromise>() => T;
+  str: () => Promise<String>;
 }
 
 export interface TestConnection {
@@ -2461,7 +2522,8 @@ export interface InvoiceSubscriptionPayloadSubscription
 export interface InvoicePreviousValues {
   idinvoice: Int;
   date: DateTimeOutput;
-  paid: Boolean;
+  tutorpaid: Boolean;
+  studentpaid: Boolean;
 }
 
 export interface InvoicePreviousValuesPromise
@@ -2469,7 +2531,8 @@ export interface InvoicePreviousValuesPromise
     Fragmentable {
   idinvoice: () => Promise<Int>;
   date: () => Promise<DateTimeOutput>;
-  paid: () => Promise<Boolean>;
+  tutorpaid: () => Promise<Boolean>;
+  studentpaid: () => Promise<Boolean>;
 }
 
 export interface InvoicePreviousValuesSubscription
@@ -2477,7 +2540,8 @@ export interface InvoicePreviousValuesSubscription
     Fragmentable {
   idinvoice: () => Promise<AsyncIterator<Int>>;
   date: () => Promise<AsyncIterator<DateTimeOutput>>;
-  paid: () => Promise<AsyncIterator<Boolean>>;
+  tutorpaid: () => Promise<AsyncIterator<Boolean>>;
+  studentpaid: () => Promise<AsyncIterator<Boolean>>;
 }
 
 export interface NoteSubscriptionPayload {
@@ -2710,18 +2774,21 @@ export interface TestSubscriptionPayloadSubscription
 
 export interface TestPreviousValues {
   idtest: Int;
+  str?: String;
 }
 
 export interface TestPreviousValuesPromise
   extends Promise<TestPreviousValues>,
     Fragmentable {
   idtest: () => Promise<Int>;
+  str: () => Promise<String>;
 }
 
 export interface TestPreviousValuesSubscription
   extends Promise<AsyncIterator<TestPreviousValues>>,
     Fragmentable {
   idtest: () => Promise<AsyncIterator<Int>>;
+  str: () => Promise<AsyncIterator<String>>;
 }
 
 export interface TutorSubscriptionPayload {

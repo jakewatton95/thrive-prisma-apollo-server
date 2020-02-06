@@ -303,7 +303,8 @@ type Invoice {
   idinvoice: Int!
   session: Session!
   date: DateTime!
-  paid: Boolean!
+  tutorpaid: Boolean!
+  studentpaid: Boolean!
   note: Note
 }
 
@@ -316,7 +317,8 @@ type InvoiceConnection {
 input InvoiceCreateInput {
   idinvoice: Int
   session: SessionCreateOneInput!
-  paid: Boolean
+  tutorpaid: Boolean
+  studentpaid: Boolean
   note: NoteCreateOneInput
 }
 
@@ -330,14 +332,17 @@ enum InvoiceOrderByInput {
   idinvoice_DESC
   date_ASC
   date_DESC
-  paid_ASC
-  paid_DESC
+  tutorpaid_ASC
+  tutorpaid_DESC
+  studentpaid_ASC
+  studentpaid_DESC
 }
 
 type InvoicePreviousValues {
   idinvoice: Int!
   date: DateTime!
-  paid: Boolean!
+  tutorpaid: Boolean!
+  studentpaid: Boolean!
 }
 
 type InvoiceSubscriptionPayload {
@@ -360,12 +365,14 @@ input InvoiceSubscriptionWhereInput {
 
 input InvoiceUpdateInput {
   session: SessionUpdateOneRequiredInput
-  paid: Boolean
+  tutorpaid: Boolean
+  studentpaid: Boolean
   note: NoteUpdateOneInput
 }
 
 input InvoiceUpdateManyMutationInput {
-  paid: Boolean
+  tutorpaid: Boolean
+  studentpaid: Boolean
 }
 
 input InvoiceWhereInput {
@@ -386,8 +393,10 @@ input InvoiceWhereInput {
   date_lte: DateTime
   date_gt: DateTime
   date_gte: DateTime
-  paid: Boolean
-  paid_not: Boolean
+  tutorpaid: Boolean
+  tutorpaid_not: Boolean
+  studentpaid: Boolean
+  studentpaid_not: Boolean
   note: NoteWhereInput
   AND: [InvoiceWhereInput!]
   OR: [InvoiceWhereInput!]
@@ -444,6 +453,9 @@ type Mutation {
   deleteStudent(where: StudentWhereUniqueInput!): Student
   deleteManyStudents(where: StudentWhereInput): BatchPayload!
   createTest(data: TestCreateInput!): Test!
+  updateTest(data: TestUpdateInput!, where: TestWhereUniqueInput!): Test
+  updateManyTests(data: TestUpdateManyMutationInput!, where: TestWhereInput): BatchPayload!
+  upsertTest(where: TestWhereUniqueInput!, create: TestCreateInput!, update: TestUpdateInput!): Test!
   deleteTest(where: TestWhereUniqueInput!): Test
   deleteManyTests(where: TestWhereInput): BatchPayload!
   createTutor(data: TutorCreateInput!): Tutor!
@@ -1147,6 +1159,8 @@ type Subscription {
 
 type Test {
   idtest: Int!
+  student: Student!
+  str: String
 }
 
 type TestConnection {
@@ -1157,6 +1171,8 @@ type TestConnection {
 
 input TestCreateInput {
   idtest: Int
+  student: StudentCreateOneInput!
+  str: String
 }
 
 type TestEdge {
@@ -1167,10 +1183,13 @@ type TestEdge {
 enum TestOrderByInput {
   idtest_ASC
   idtest_DESC
+  str_ASC
+  str_DESC
 }
 
 type TestPreviousValues {
   idtest: Int!
+  str: String
 }
 
 type TestSubscriptionPayload {
@@ -1191,6 +1210,15 @@ input TestSubscriptionWhereInput {
   NOT: [TestSubscriptionWhereInput!]
 }
 
+input TestUpdateInput {
+  student: StudentUpdateOneRequiredInput
+  str: String
+}
+
+input TestUpdateManyMutationInput {
+  str: String
+}
+
 input TestWhereInput {
   idtest: Int
   idtest_not: Int
@@ -1200,6 +1228,21 @@ input TestWhereInput {
   idtest_lte: Int
   idtest_gt: Int
   idtest_gte: Int
+  student: StudentWhereInput
+  str: String
+  str_not: String
+  str_in: [String!]
+  str_not_in: [String!]
+  str_lt: String
+  str_lte: String
+  str_gt: String
+  str_gte: String
+  str_contains: String
+  str_not_contains: String
+  str_starts_with: String
+  str_not_starts_with: String
+  str_ends_with: String
+  str_not_ends_with: String
   AND: [TestWhereInput!]
   OR: [TestWhereInput!]
   NOT: [TestWhereInput!]

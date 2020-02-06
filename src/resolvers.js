@@ -59,7 +59,7 @@ export const resolvers = {
         }
     },
     User: {
-         id: (parent,_,ctx) => {
+        id: (parent,_,ctx) => {
             return parent.iduser
         },
         company: async (parent, _, ctx) => {
@@ -76,8 +76,17 @@ export const resolvers = {
         company : async (_, args, ctx) => {
             return await ctx.db.company({idcompany: args.id})
         },
-        invoices: (_,__, ctx)=>{
-            return ctx.db.invoices()
+        invoices: async (_,__, ctx)=>{
+            return await ctx.db.invoices()
+        },
+        invoicesByCompany: async (_,args, ctx)=>{
+            return await ctx.db.invoices({where: {session: {product: {company : {idcompany: args.companyid}}}}})
+        },
+        invoicesByStudent: async(_, args, ctx) => {
+            return await ctx.db.invoices({where: {session: {product: {student: {user: {iduser: args.userid}}}}}})
+        },
+        invoicesByTutor: async(_, args, ctx) => {
+            return await ctx.db.invoices({where: {session: {product: {tutor: {user: {iduser: args.userid}}}}}})
         },
         products: async (_, __, ctx) => {
             return await ctx.db.products()
@@ -201,8 +210,11 @@ export const resolvers = {
                 product : {connect: {idproduct: productid}}
             })
         },
-        createInvoice: (_, {input}, ctx) => {
-            return ctx.db.createInvoice(input)
+        createInvoice: async (_, {input}, ctx) => {
+            const {sessionid, date, studentpaid, tutorpaid} = input
+            return await ctx.db.createInvoice({ date, studentpaid, tutorpaid, 
+                session: {connect: {idsession: sessionid}}
+            })
         }
     }
 }

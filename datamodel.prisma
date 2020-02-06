@@ -61,7 +61,8 @@ type Invoice {
   idinvoice: Int! @id
   session: Session!
   date: DateTime! @createdAt
-  paid: Boolean! @default(value: false)
+  tutorpaid: Boolean! @default(value: false)
+  studentpaid: Boolean! @default(value: false)
   note: Note
 }
 
@@ -74,4 +75,5 @@ type Note {
 type Test {
   idtest: Int! @id
   student: Student!
+  str: String
 }

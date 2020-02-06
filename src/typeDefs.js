@@ -11,7 +11,8 @@ enum Role{
 type Invoice {
     id: ID!
     date: String!
-    paid: Boolean!
+    studentpaid: Boolean!
+    tutorpaid: Boolean!
     session: Session!
     note: Note
 }
@@ -85,6 +86,9 @@ type Query{
     companies: [Company]!
     company(id: Int!): Company
     invoices:[Invoice]!
+    invoicesByCompany(companyid: Int!): [Invoice]!
+    invoicesByStudent(userid: Int!): [Invoice]!
+    invoicesByTutor(userid: Int!): [Invoice]!
     products:[Product]!
     productsByCompany(companyid: Int!): [Product]!
     productById(id: Int!): Product
@@ -156,7 +160,8 @@ input SessionInput{
 input InvoiceInput{
     sessionid: Int!
     date: String
-    paid: Boolean
+    studentpaid: Boolean
+    tutorpaid: Boolean
     noteid: Int
 }
 
