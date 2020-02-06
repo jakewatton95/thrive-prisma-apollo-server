@@ -88,8 +88,12 @@ type Query{
     products:[Product]!
     productsByCompany(companyid: Int!): [Product]!
     productById(id: Int!): Product
+    productsByStudent(userid: Int!): [Product]!
+    productsByTutor(userid: Int!): [Product]!
     sessions: [Session]!
     sessionsByCompany(companyid: Int!): [Session]!
+    sessionsByStudent(userid: Int!): [Session]!
+    sessionsByTutor(userid: Int!): [Session]!
     students: [Student]!
     studentsByCompany(companyid: Int!): [Student]!
     studentByID(id: Int!): Student
@@ -117,6 +121,13 @@ input StudentTutorAdminInput{
     name: String!
     phone: String!
     userid: Int!
+}
+
+input StudentTutorAdminCreateUserInput{
+    email: String!
+    name: String!
+    phone: String!
+    companyid: Int!
 }
 
 input ProductInput{
@@ -154,7 +165,9 @@ type Mutation{
     createCompany(input: CompanyInput!): Company
     createAdmin(input: StudentTutorAdminInput!): Admin
     createStudent(input: StudentTutorAdminInput!): Student
+    createStudentAndUser(input: StudentTutorAdminCreateUserInput!): Student
     createTutor(input: StudentTutorAdminInput!): Tutor
+    createTutorAndUser(input: StudentTutorAdminCreateUserInput!): Tutor
     createProduct(input: ProductInput!): Product
     createSession(input: SessionInput!): Session
     createInvoice(input: InvoiceInput!): Invoice

@@ -147,6 +147,10 @@ type AggregateStudent {
   count: Int!
 }
 
+type AggregateTest {
+  count: Int!
+}
+
 type AggregateTutor {
   count: Int!
 }
@@ -439,6 +443,9 @@ type Mutation {
   upsertStudent(where: StudentWhereUniqueInput!, create: StudentCreateInput!, update: StudentUpdateInput!): Student!
   deleteStudent(where: StudentWhereUniqueInput!): Student
   deleteManyStudents(where: StudentWhereInput): BatchPayload!
+  createTest(data: TestCreateInput!): Test!
+  deleteTest(where: TestWhereUniqueInput!): Test
+  deleteManyTests(where: TestWhereInput): BatchPayload!
   createTutor(data: TutorCreateInput!): Tutor!
   updateTutor(data: TutorUpdateInput!, where: TutorWhereUniqueInput!): Tutor
   updateManyTutors(data: TutorUpdateManyMutationInput!, where: TutorWhereInput): BatchPayload!
@@ -780,6 +787,9 @@ type Query {
   student(where: StudentWhereUniqueInput!): Student
   students(where: StudentWhereInput, orderBy: StudentOrderByInput, skip: Int, after: String, before: String, first: Int, last: Int): [Student]!
   studentsConnection(where: StudentWhereInput, orderBy: StudentOrderByInput, skip: Int, after: String, before: String, first: Int, last: Int): StudentConnection!
+  test(where: TestWhereUniqueInput!): Test
+  tests(where: TestWhereInput, orderBy: TestOrderByInput, skip: Int, after: String, before: String, first: Int, last: Int): [Test]!
+  testsConnection(where: TestWhereInput, orderBy: TestOrderByInput, skip: Int, after: String, before: String, first: Int, last: Int): TestConnection!
   tutor(where: TutorWhereUniqueInput!): Tutor
   tutors(where: TutorWhereInput, orderBy: TutorOrderByInput, skip: Int, after: String, before: String, first: Int, last: Int): [Tutor]!
   tutorsConnection(where: TutorWhereInput, orderBy: TutorOrderByInput, skip: Int, after: String, before: String, first: Int, last: Int): TutorConnection!
@@ -1130,8 +1140,73 @@ type Subscription {
   product(where: ProductSubscriptionWhereInput): ProductSubscriptionPayload
   session(where: SessionSubscriptionWhereInput): SessionSubscriptionPayload
   student(where: StudentSubscriptionWhereInput): StudentSubscriptionPayload
+  test(where: TestSubscriptionWhereInput): TestSubscriptionPayload
   tutor(where: TutorSubscriptionWhereInput): TutorSubscriptionPayload
   user(where: UserSubscriptionWhereInput): UserSubscriptionPayload
+}
+
+type Test {
+  idtest: Int!
+}
+
+type TestConnection {
+  pageInfo: PageInfo!
+  edges: [TestEdge]!
+  aggregate: AggregateTest!
+}
+
+input TestCreateInput {
+  idtest: Int
+}
+
+type TestEdge {
+  node: Test!
+  cursor: String!
+}
+
+enum TestOrderByInput {
+  idtest_ASC
+  idtest_DESC
+}
+
+type TestPreviousValues {
+  idtest: Int!
+}
+
+type TestSubscriptionPayload {
+  mutation: MutationType!
+  node: Test
+  updatedFields: [String!]
+  previousValues: TestPreviousValues
+}
+
+input TestSubscriptionWhereInput {
+  mutation_in: [MutationType!]
+  updatedFields_contains: String
+  updatedFields_contains_every: [String!]
+  updatedFields_contains_some: [String!]
+  node: TestWhereInput
+  AND: [TestSubscriptionWhereInput!]
+  OR: [TestSubscriptionWhereInput!]
+  NOT: [TestSubscriptionWhereInput!]
+}
+
+input TestWhereInput {
+  idtest: Int
+  idtest_not: Int
+  idtest_in: [Int!]
+  idtest_not_in: [Int!]
+  idtest_lt: Int
+  idtest_lte: Int
+  idtest_gt: Int
+  idtest_gte: Int
+  AND: [TestWhereInput!]
+  OR: [TestWhereInput!]
+  NOT: [TestWhereInput!]
+}
+
+input TestWhereUniqueInput {
+  idtest: Int
 }
 
 type Tutor {

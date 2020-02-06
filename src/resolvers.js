@@ -6,11 +6,10 @@ export const resolvers = {
     },
     Invoice: {
         id: (parent)=>{
-            console.log(parent)
             return parent.idinvoice
         },
-        session: (parent, _, ctx) => {
-            return ctx.db.session({idsession: parent.sessionid})
+        session: async (parent, _, ctx) => {
+            return await (ctx.db.invoice({idinvoice: parent.idinvoice}).session())
         }, 
     },
     Product: {
@@ -31,8 +30,8 @@ export const resolvers = {
         id: (parent)=>{
             return parent.idsession
         },
-        product: (parent, _, ctx) => {
-            return ctx.db.product({idproduct: parent.productid})
+        product: async (parent, _, ctx) => {
+            return await (ctx.db.session({idsession: parent.idsession}).product())
         }
     },
     Admin: {
@@ -61,7 +60,6 @@ export const resolvers = {
     },
     User: {
          id: (parent,_,ctx) => {
-            console.log(parent)
             return parent.iduser
         },
         company: async (parent, _, ctx) => {
@@ -73,31 +71,40 @@ export const resolvers = {
             return await ctx.db.admins()
         },
         companies : async (_, __, ctx) => {
-            console.log("A")
             return await ctx.db.companies()
         },
         company : async (_, args, ctx) => {
             return await ctx.db.company({idcompany: args.id})
         },
         invoices: (_,__, ctx)=>{
-            console.log(ctx.db)
             return ctx.db.invoices()
         },
         products: async (_, __, ctx) => {
             return await ctx.db.products()
         },
         productsByCompany: async (_, args, ctx) => {
-            console.log("CALLED")
             return await ctx.db.products({where: {company : {idcompany: args.companyid}}})
+        },
+        productsByStudent: async(_, args, ctx) => {
+            return await ctx.db.products({where: {student: {user: {iduser: args.userid}}}})
+        },
+        productsByTutor: async(_, args, ctx) => {
+            return await ctx.db.products({where: {tutor: {user: {iduser: args.userid}}}})
         },
         productById: async (_, args, ctx) => {
             return await ctx.db.product({idproduct: args.id})
         },
-        sessions: (_, __, ctx) => {
-            return ctx.db.sessions()
+        sessions: async (_, __, ctx) => {
+            return await ctx.db.sessions()
         },
-        sessionsByCompany: (_, args, ctx) => {
-            return ctx.db.sessions({where : {product : args}})
+        sessionsByCompany: async (_, args, ctx) => {
+            return await ctx.db.sessions({where : {product : {company: {idcompany: args.companyid}}}})
+        },
+        sessionsByStudent: async (_, args, ctx) => {
+            return await ctx.db.sessions({where : {product : {student: {user: {iduser: args.userid}}}}})
+        },
+        sessionsByTutor: async (_, args, ctx) => {
+            return await ctx.db.sessions({where : {product : {tutor: {user: {iduser: args.userid}}}}})
         },
         students: async (_, __, ctx) => {
             return await ctx.db.students()
@@ -128,7 +135,6 @@ export const resolvers = {
             return await ctx.db.user({iduser: args.id})
         },
         userByEmail: async (_, args, ctx) => {
-            console.log(args)
             return await ctx.db.user(args)
         }
     },
@@ -148,9 +154,38 @@ export const resolvers = {
             const {name, phone, userid} = input
             return await ctx.db.createStudent({name, phone, user: {connect: {iduser: userid}}})
         },
+        createStudentAndUser: async(_, {input}, ctx) => {
+            const{name, email, phone, companyid} = input
+            return await ctx.db.createStudent({name, phone, user: {
+                create: {
+                    email,
+                    role: "Student",
+                    company: {
+                        connect: {
+                            idcompany: companyid
+                        }
+                    }
+
+                }
+            }})
+        },
         createTutor: async (_, {input}, ctx) => {
             const {name, phone, userid} = input
             return await ctx.db.createTutor({name, phone, user: {connect: {iduser: userid}}})
+        },
+        createTutorAndUser: async(_, {input}, ctx) => {
+            const{name, email, phone, companyid} = input
+            return await ctx.db.createTutor({name, phone, user: {
+                create: {
+                    email,
+                    role: "Tutor",
+                    company: {
+                        connect: {
+                            idcompany: companyid
+                        }
+                    }
+                }
+            }})
         },
         createProduct: async (_, {input}, ctx) => {
             const {tutorid, studentid, rate, subject, tutorshare, companyid, active} = input
@@ -160,8 +195,11 @@ export const resolvers = {
                 tutor: {connect: {idtutor: tutorid}}    
             })
         },
-        createSession: (_,{input},ctx)=> {
-            return ctx.db.createSession(input)
+        createSession: async (_,{input},ctx)=> {
+            const {date, length, location, invoiced, studentconfirmed, tutorconfirmed, productid} = input
+            return await ctx.db.createSession({date, length, location, invoiced, studentconfirmed, tutorconfirmed,
+                product : {connect: {idproduct: productid}}
+            })
         },
         createInvoice: (_, {input}, ctx) => {
             return ctx.db.createInvoice(input)

@@ -23,6 +23,7 @@ export interface Exists {
   product: (where?: ProductWhereInput) => Promise<boolean>;
   session: (where?: SessionWhereInput) => Promise<boolean>;
   student: (where?: StudentWhereInput) => Promise<boolean>;
+  test: (where?: TestWhereInput) => Promise<boolean>;
   tutor: (where?: TutorWhereInput) => Promise<boolean>;
   user: (where?: UserWhereInput) => Promise<boolean>;
 }
@@ -179,6 +180,25 @@ export interface Prisma {
     first?: Int;
     last?: Int;
   }) => StudentConnectionPromise;
+  test: (where: TestWhereUniqueInput) => TestNullablePromise;
+  tests: (args?: {
+    where?: TestWhereInput;
+    orderBy?: TestOrderByInput;
+    skip?: Int;
+    after?: String;
+    before?: String;
+    first?: Int;
+    last?: Int;
+  }) => FragmentableArray<Test>;
+  testsConnection: (args?: {
+    where?: TestWhereInput;
+    orderBy?: TestOrderByInput;
+    skip?: Int;
+    after?: String;
+    before?: String;
+    first?: Int;
+    last?: Int;
+  }) => TestConnectionPromise;
   tutor: (where: TutorWhereUniqueInput) => TutorNullablePromise;
   tutors: (args?: {
     where?: TutorWhereInput;
@@ -335,6 +355,9 @@ export interface Prisma {
   }) => StudentPromise;
   deleteStudent: (where: StudentWhereUniqueInput) => StudentPromise;
   deleteManyStudents: (where?: StudentWhereInput) => BatchPayloadPromise;
+  createTest: (data: TestCreateInput) => TestPromise;
+  deleteTest: (where: TestWhereUniqueInput) => TestPromise;
+  deleteManyTests: (where?: TestWhereInput) => BatchPayloadPromise;
   createTutor: (data: TutorCreateInput) => TutorPromise;
   updateTutor: (args: {
     data: TutorUpdateInput;
@@ -397,6 +420,9 @@ export interface Subscription {
   student: (
     where?: StudentSubscriptionWhereInput
   ) => StudentSubscriptionPayloadSubscription;
+  test: (
+    where?: TestSubscriptionWhereInput
+  ) => TestSubscriptionPayloadSubscription;
   tutor: (
     where?: TutorSubscriptionWhereInput
   ) => TutorSubscriptionPayloadSubscription;
@@ -478,6 +504,8 @@ export type StudentOrderByInput =
   | "name_DESC"
   | "phone_ASC"
   | "phone_DESC";
+
+export type TestOrderByInput = "idtest_ASC" | "idtest_DESC";
 
 export type TutorOrderByInput =
   | "idtutor_ASC"
@@ -897,6 +925,24 @@ export type StudentWhereUniqueInput = AtLeastOne<{
   idstudent: Maybe<Int>;
 }>;
 
+export type TestWhereUniqueInput = AtLeastOne<{
+  idtest: Maybe<Int>;
+}>;
+
+export interface TestWhereInput {
+  idtest?: Maybe<Int>;
+  idtest_not?: Maybe<Int>;
+  idtest_in?: Maybe<Int[] | Int>;
+  idtest_not_in?: Maybe<Int[] | Int>;
+  idtest_lt?: Maybe<Int>;
+  idtest_lte?: Maybe<Int>;
+  idtest_gt?: Maybe<Int>;
+  idtest_gte?: Maybe<Int>;
+  AND?: Maybe<TestWhereInput[] | TestWhereInput>;
+  OR?: Maybe<TestWhereInput[] | TestWhereInput>;
+  NOT?: Maybe<TestWhereInput[] | TestWhereInput>;
+}
+
 export type TutorWhereUniqueInput = AtLeastOne<{
   idtutor: Maybe<Int>;
 }>;
@@ -1240,6 +1286,10 @@ export interface StudentUpdateManyMutationInput {
   phone?: Maybe<String>;
 }
 
+export interface TestCreateInput {
+  idtest?: Maybe<Int>;
+}
+
 export interface TutorUpdateInput {
   name?: Maybe<String>;
   phone?: Maybe<String>;
@@ -1337,6 +1387,17 @@ export interface StudentSubscriptionWhereInput {
   AND?: Maybe<StudentSubscriptionWhereInput[] | StudentSubscriptionWhereInput>;
   OR?: Maybe<StudentSubscriptionWhereInput[] | StudentSubscriptionWhereInput>;
   NOT?: Maybe<StudentSubscriptionWhereInput[] | StudentSubscriptionWhereInput>;
+}
+
+export interface TestSubscriptionWhereInput {
+  mutation_in?: Maybe<MutationType[] | MutationType>;
+  updatedFields_contains?: Maybe<String>;
+  updatedFields_contains_every?: Maybe<String[] | String>;
+  updatedFields_contains_some?: Maybe<String[] | String>;
+  node?: Maybe<TestWhereInput>;
+  AND?: Maybe<TestSubscriptionWhereInput[] | TestSubscriptionWhereInput>;
+  OR?: Maybe<TestSubscriptionWhereInput[] | TestSubscriptionWhereInput>;
+  NOT?: Maybe<TestSubscriptionWhereInput[] | TestSubscriptionWhereInput>;
 }
 
 export interface TutorSubscriptionWhereInput {
@@ -2080,6 +2141,80 @@ export interface AggregateStudentSubscription
   count: () => Promise<AsyncIterator<Int>>;
 }
 
+export interface Test {
+  idtest: Int;
+}
+
+export interface TestPromise extends Promise<Test>, Fragmentable {
+  idtest: () => Promise<Int>;
+}
+
+export interface TestSubscription
+  extends Promise<AsyncIterator<Test>>,
+    Fragmentable {
+  idtest: () => Promise<AsyncIterator<Int>>;
+}
+
+export interface TestNullablePromise
+  extends Promise<Test | null>,
+    Fragmentable {
+  idtest: () => Promise<Int>;
+}
+
+export interface TestConnection {
+  pageInfo: PageInfo;
+  edges: TestEdge[];
+}
+
+export interface TestConnectionPromise
+  extends Promise<TestConnection>,
+    Fragmentable {
+  pageInfo: <T = PageInfoPromise>() => T;
+  edges: <T = FragmentableArray<TestEdge>>() => T;
+  aggregate: <T = AggregateTestPromise>() => T;
+}
+
+export interface TestConnectionSubscription
+  extends Promise<AsyncIterator<TestConnection>>,
+    Fragmentable {
+  pageInfo: <T = PageInfoSubscription>() => T;
+  edges: <T = Promise<AsyncIterator<TestEdgeSubscription>>>() => T;
+  aggregate: <T = AggregateTestSubscription>() => T;
+}
+
+export interface TestEdge {
+  node: Test;
+  cursor: String;
+}
+
+export interface TestEdgePromise extends Promise<TestEdge>, Fragmentable {
+  node: <T = TestPromise>() => T;
+  cursor: () => Promise<String>;
+}
+
+export interface TestEdgeSubscription
+  extends Promise<AsyncIterator<TestEdge>>,
+    Fragmentable {
+  node: <T = TestSubscription>() => T;
+  cursor: () => Promise<AsyncIterator<String>>;
+}
+
+export interface AggregateTest {
+  count: Int;
+}
+
+export interface AggregateTestPromise
+  extends Promise<AggregateTest>,
+    Fragmentable {
+  count: () => Promise<Int>;
+}
+
+export interface AggregateTestSubscription
+  extends Promise<AsyncIterator<AggregateTest>>,
+    Fragmentable {
+  count: () => Promise<AsyncIterator<Int>>;
+}
+
 export interface TutorConnection {
   pageInfo: PageInfo;
   edges: TutorEdge[];
@@ -2548,6 +2683,47 @@ export interface StudentPreviousValuesSubscription
   phone: () => Promise<AsyncIterator<String>>;
 }
 
+export interface TestSubscriptionPayload {
+  mutation: MutationType;
+  node: Test;
+  updatedFields: String[];
+  previousValues: TestPreviousValues;
+}
+
+export interface TestSubscriptionPayloadPromise
+  extends Promise<TestSubscriptionPayload>,
+    Fragmentable {
+  mutation: () => Promise<MutationType>;
+  node: <T = TestPromise>() => T;
+  updatedFields: () => Promise<String[]>;
+  previousValues: <T = TestPreviousValuesPromise>() => T;
+}
+
+export interface TestSubscriptionPayloadSubscription
+  extends Promise<AsyncIterator<TestSubscriptionPayload>>,
+    Fragmentable {
+  mutation: () => Promise<AsyncIterator<MutationType>>;
+  node: <T = TestSubscription>() => T;
+  updatedFields: () => Promise<AsyncIterator<String[]>>;
+  previousValues: <T = TestPreviousValuesSubscription>() => T;
+}
+
+export interface TestPreviousValues {
+  idtest: Int;
+}
+
+export interface TestPreviousValuesPromise
+  extends Promise<TestPreviousValues>,
+    Fragmentable {
+  idtest: () => Promise<Int>;
+}
+
+export interface TestPreviousValuesSubscription
+  extends Promise<AsyncIterator<TestPreviousValues>>,
+    Fragmentable {
+  idtest: () => Promise<AsyncIterator<Int>>;
+}
+
 export interface TutorSubscriptionPayload {
   mutation: MutationType;
   node: Tutor;
@@ -2719,6 +2895,10 @@ export const models: Model[] = [
   },
   {
     name: "Note",
+    embedded: false
+  },
+  {
+    name: "Test",
     embedded: false
   }
 ];
