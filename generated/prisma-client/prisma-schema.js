@@ -1009,7 +1009,7 @@ type Student {
   idstudent: Int!
   name: String!
   phone: String!
-  user: User!
+  user: User
 }
 
 type StudentConnection {
@@ -1022,7 +1022,7 @@ input StudentCreateInput {
   idstudent: Int
   name: String!
   phone: String!
-  user: UserCreateOneInput!
+  user: UserCreateOneInput
 }
 
 input StudentCreateOneInput {
@@ -1071,13 +1071,13 @@ input StudentSubscriptionWhereInput {
 input StudentUpdateDataInput {
   name: String
   phone: String
-  user: UserUpdateOneRequiredInput
+  user: UserUpdateOneInput
 }
 
 input StudentUpdateInput {
   name: String
   phone: String
-  user: UserUpdateOneRequiredInput
+  user: UserUpdateOneInput
 }
 
 input StudentUpdateManyMutationInput {
@@ -1469,6 +1469,15 @@ input UserUpdateInput {
 input UserUpdateManyMutationInput {
   email: String
   role: String
+}
+
+input UserUpdateOneInput {
+  create: UserCreateInput
+  update: UserUpdateDataInput
+  upsert: UserUpsertNestedInput
+  delete: Boolean
+  disconnect: Boolean
+  connect: UserWhereUniqueInput
 }
 
 input UserUpdateOneRequiredInput {

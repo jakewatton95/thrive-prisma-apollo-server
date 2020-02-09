@@ -83,6 +83,7 @@ type Session {
 
 type Query{
     admins: [Admin]!
+    adminByUserID(userid: Int!): [Admin]!
     companies: [Company]!
     company(id: Int!): Company
     invoices:[Invoice]!
@@ -101,9 +102,11 @@ type Query{
     students: [Student]!
     studentsByCompany(companyid: Int!): [Student]!
     studentByID(id: Int!): Student
+    studentByUserID(userid: Int!): [Student]!
     tutors: [Tutor]!
     tutorsByCompany(companyid: Int!): [Tutor]!
     tutorByID(id: Int!): Tutor
+    tutorByUserID(userid: Int!): [Tutor]!
     users: [User]!
     usersByCompany(companyid: Int!): [User]!
     userByEmail(email: String!): User

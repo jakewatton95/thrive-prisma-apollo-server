@@ -15,21 +15,21 @@ type Student {
   idstudent: Int! @id
   name: String!
   phone: String!
-  user: User!
+  user: User @unique
 }
 
 type Tutor {
   idtutor: Int! @id
   name: String!
   phone: String!
-  user: User!
+  user: User! @unique
 }
 
 type Admin {
   idadmin: Int! @id
   name: String!
   phone: String!
-  user: User!
+  user: User! @unique 
 }
 
 type Product {

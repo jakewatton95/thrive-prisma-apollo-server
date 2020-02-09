@@ -1126,7 +1126,7 @@ export interface StudentCreateInput {
   idstudent?: Maybe<Int>;
   name: String;
   phone: String;
-  user: UserCreateOneInput;
+  user?: Maybe<UserCreateOneInput>;
 }
 
 export interface TutorCreateOneInput {
@@ -1206,7 +1206,16 @@ export interface StudentUpdateOneRequiredInput {
 export interface StudentUpdateDataInput {
   name?: Maybe<String>;
   phone?: Maybe<String>;
-  user?: Maybe<UserUpdateOneRequiredInput>;
+  user?: Maybe<UserUpdateOneInput>;
+}
+
+export interface UserUpdateOneInput {
+  create?: Maybe<UserCreateInput>;
+  update?: Maybe<UserUpdateDataInput>;
+  upsert?: Maybe<UserUpsertNestedInput>;
+  delete?: Maybe<Boolean>;
+  disconnect?: Maybe<Boolean>;
+  connect?: Maybe<UserWhereUniqueInput>;
 }
 
 export interface StudentUpsertNestedInput {
@@ -1317,7 +1326,7 @@ export interface SessionUpdateManyMutationInput {
 export interface StudentUpdateInput {
   name?: Maybe<String>;
   phone?: Maybe<String>;
-  user?: Maybe<UserUpdateOneRequiredInput>;
+  user?: Maybe<UserUpdateOneInput>;
 }
 
 export interface StudentUpdateManyMutationInput {

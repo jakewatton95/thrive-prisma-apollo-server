@@ -35,25 +35,19 @@ export const resolvers = {
         }
     },
     Admin: {
-        id: (parent)=>{
-            return parent.idadmin
-        },
+        id: parent=> parent.idadmin,
         user: async (parent, _, ctx) => {
             return await (ctx.db.admin({idadmin: parent.idadmin}).user())
         }
     },
     Student: {
-        id: (parent)=>{
-            return parent.idstudent
-        },
+        id: parent=> parent.idstudent,
         user: async (parent, _, ctx) => {
             return await (ctx.db.student({idstudent: parent.idstudent}).user())
         }
     },
     Tutor: {
-        id: (parent)=>{
-            return parent.idtutor
-        },
+        id: parent=> parent.idtutor,
         user: async (parent, _, ctx) => {
             return await (ctx.db.tutor({idtutor: parent.idtutor}).user())
         }
@@ -69,6 +63,9 @@ export const resolvers = {
     Query : {
         admins: async (_,__,ctx) => {
             return await ctx.db.admins()
+        },
+        adminByUserID: async (_,args,ctx) => {
+            return await ctx.db.admins({where: {user: {iduser: args.userid}}}, {first: 1})
         },
         companies : async (_, __, ctx) => {
             return await ctx.db.companies()
@@ -124,6 +121,9 @@ export const resolvers = {
         studentByID: async (_, args, ctx) => {
             return await ctx.db.student({idstudent: args.id})
         },
+        studentByUserID: async (_,args,ctx) => {
+            return await ctx.db.students({where: {user: {iduser: args.userid}}}, {first:1})
+        },
         tutors: async (_, __, ctx) => {
             return await ctx.db.tutors()
         },
@@ -132,6 +132,9 @@ export const resolvers = {
         },
         tutorByID: async (_, args, ctx) => {
             return await ctx.db.tutor({idtutor: args.id})
+        },
+        tutorByUserID: async (_,args,ctx) => {
+            return await ctx.db.tutors({where: {user: {iduser: args.userid}}}, {first:1})
         },
         users: async (_, {}, ctx) => {
             // console.log(ctx.req.req.headers)
