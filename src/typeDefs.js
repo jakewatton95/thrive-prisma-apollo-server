@@ -168,6 +168,16 @@ input InvoiceInput{
     noteid: Int
 }
 
+input SessionIDInput {
+    sessionid: Int!
+}
+
+input UpdatePaymentInput {
+    invoiceid: Int!
+    studentpaid: Boolean
+    tutorpaid: Boolean
+}
+
 type Mutation{
     createUser(input: UserInput!): User
     createCompany(input: CompanyInput!): Company
@@ -179,4 +189,6 @@ type Mutation{
     createProduct(input: ProductInput!): Product
     createSession(input: SessionInput!): Session
     createInvoice(input: InvoiceInput!): Invoice
+    setInvoicedTrue(input: SessionIDInput!): Session
+    updateInvoicePayment(input: UpdatePaymentInput!): Invoice
 }`

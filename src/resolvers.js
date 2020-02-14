@@ -218,6 +218,15 @@ export const resolvers = {
             return await ctx.db.createInvoice({ date, studentpaid, tutorpaid, 
                 session: {connect: {idsession: sessionid}}
             })
+        },
+        setInvoicedTrue: async (_, {input}, ctx) => {
+            const {sessionid} = input
+            return await ctx.db.updateSession({where: {idsession: sessionid}, data: {invoiced: true}})
+        },
+        updateInvoicePayment: async(_, {input}, ctx) => {
+            const {invoiceid, studentpaid, tutorpaid} = input
+            return await ctx.db.updateInvoice({where: {idinvoice: invoiceid}, data:{studentpaid, tutorpaid}})
         }
+
     }
 }
